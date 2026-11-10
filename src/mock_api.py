@@ -1,6 +1,7 @@
 """mock_api.py - Temporary REST API so dashboard can be built"""
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
+
 
 # All routes in this blueprint start with /api
 mock_api = Blueprint("mock_api", __name__, url_prefix="/api")
@@ -20,5 +21,21 @@ PAPERS = [
 
 @mock_api.get("/papers")
 def list_papers():
-    """GET /api/papers - return every paper as JSON."""
-    return jsonify({"items": PAPERS, "total": len(PAPERS)})
+    """
+    GET /api/papers?q=<text>
+    Return papers whose title, authors or venue contain the search text.
+    With no q, return every paper.
+    """
+    q = request.args.get("q", "").strip().lower()   # read ?q= from the URL
+
+    if q:
+        results = [
+            p for p in PAPERS
+            if q in p["title"].lower()
+            or q in p["venue"].lower()
+            or any(q in author.lower() for author in p["authors"])
+        ]
+    else:
+        results = PAPERS
+
+    return jsonify({"items": results, "total": len(results)})

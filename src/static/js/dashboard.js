@@ -2,17 +2,23 @@
  * dashboard.js - Load papers from REST API display on dashboard.
  */
 
-async function loadPapers() {
+async function loadPapers(query = "") {
     const list = document.getElementById("paper-list");
   
     try {
-      const response = await fetch("/api/papers");   // send GET /api/papers
-      if (!response.ok) {                             // anything other than 2xx
+      // e.g. "/api/papers?q=cloud". URLSearchParams safely encodes spaces and symbols.
+      const url = "/api/papers?" + new URLSearchParams({ q: query });
+      const response = await fetch(url);
+      if (!response.ok) {
         throw new Error("Request failed (" + response.status + ")");
       }
-      const data = await response.json();             // turn the JSON text into an object
+      const data = await response.json();
   
-      list.innerHTML = "";                      
+      list.innerHTML = "";
+      if (data.items.length === 0) {
+        list.innerHTML = '<li class="empty">No papers match your search.</li>';
+        return;
+      }
       for (const paper of data.items) {
         list.appendChild(paperItem(paper));
       }
@@ -40,6 +46,20 @@ async function loadPapers() {
     li.appendChild(details);
     return li;
   }
+
+  function debounce(fn, ms = 300) {
+    let timer;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn(...args), ms);
+    };
+  }
   
-  // Run once the page has loaded.
-  loadPapers();
+// Search as the user types
+const searchInput = document.getElementById("search-input");
+searchInput.addEventListener("input", debounce(() => {
+  loadPapers(searchInput.value.trim());
+}));
+
+// Load all papers
+loadPapers();
