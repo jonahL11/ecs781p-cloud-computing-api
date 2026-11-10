@@ -24,11 +24,14 @@ async function loadPapers() {
   // Build one <li> for a paper.
   function paperItem(paper) {
     const li = document.createElement("li");
-  
+    li.className = "paper";
+
     const title = document.createElement("strong");
+    title.className = "paper-title";
     title.textContent = paper.title;
   
     const details = document.createElement("div");
+    details.className = "paper-meta";
     details.textContent =
       paper.authors.join(", ") + " · " + paper.venue + " · " + paper.year +
       " · Cited by " + paper.citations.toLocaleString();

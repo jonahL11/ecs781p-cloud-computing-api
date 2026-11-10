@@ -1,0 +1,63 @@
+/* dashboard.css - Styles for the dashboard page. */
+
+/* Colours and fonts
+   :root {
+    --bg: #f6f5f1;
+    --surface: #ffffff;
+    --border: #e2dfd6;
+    --text: #1d1c1a;
+    --muted: #6b6860;
+    --accent: #1f4e8c;
+    --green: #1e7a46;
+    --font-body: "Inter", system-ui, sans-serif;
+    --font-head: "Source Serif 4", Georgia, serif;
+  }
+  
+  /* Dark mode: same variables, different values */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151513;
+      --surface: #1e1e1b;
+      --border: #34332f;
+      --text: #ecebe6;
+      --muted: #a19e95;
+      --accent: #7fa9e6;
+      --green: #6fcf97;
+    }
+  }
+  
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.5 var(--font-body);
+  }
+  
+  h1, h2 { font-family: var(--font-head); font-weight: 600; margin: 0 0 8px; }
+  h1 { font-size: 2rem; }
+  .muted { color: var(--muted); margin-top: 0; }
+  
+  /* Centre the content */
+  .main { max-width: 900px; margin: 0 auto; padding: 32px 20px; }
+  
+  /* White card around the list */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 24px;
+  }
+  
+  /* Remove bullet points and add a line between papers */
+  .paper-list { list-style: none; margin: 0; padding: 0; }
+  .paper { padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .paper:last-child { border-bottom: 0; }
+  
+  .paper-title {
+    display: block;
+    font-family: var(--font-head);
+    font-size: 1.1rem;
+    color: var(--accent);
+  }
+  .paper-meta { color: var(--green); font-size: 0.88rem; }
