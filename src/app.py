@@ -1,7 +1,9 @@
 from flask import Flask, jsonify, request, render_template
 from auth import authenticate
+from mock_api import mock_api
 
 app = Flask(__name__)
+app.register_blueprint(mock_api)
 
 
 #TODO FE: Signup/Login Forms
@@ -51,6 +53,11 @@ def post_login():
     authenticate(username, pw)
     pass
 
+@app.route('/dashboard', methods=['GET'])
+def dashboard():
+    # Show the dashboard page.
+    return render_template("dashboard.html")
+
 # Forget password
 # Enter email
 # check if exists
@@ -60,4 +67,4 @@ def post_login():
 # route "/user/<user-id>
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5001)
