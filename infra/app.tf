@@ -15,31 +15,31 @@ provider "kubernetes" {
 # deploymet ensures enough/not too many replicas of pods run
 resource "kubernetes_deployment_v1" "default" {
   metadata {
-    name = "example-hello-app-deployment"
+    name = "paper-query-app-deployment"
   }
 
   spec {
     selector {
       match_labels = {
-        app = "hello-app"
+        app = "paper-query-app"
       }
     }
 
     template {
       metadata {
         labels = {
-          app = "hello-app"
+          app = "paper-query-app"
         }
       }
 
       spec {
         container {
-          image = "us-docker.pkg.dev/google-samples/containers/gke/hello-app:2.0"
-          name  = "hello-app-container"
+          image = "europe-west2-docker.pkg.dev/mini-project-781p/ecs781p-docker-repo/paper_query_app:v1"
+          name  = "paper-query-app"
 
           port {
-            container_port = 8080
-            name           = "hello-app-svc"
+            container_port = 5050
+            name           = "paper-query-svc"
           }
 
           security_context {
@@ -56,7 +56,7 @@ resource "kubernetes_deployment_v1" "default" {
           liveness_probe {
             http_get {
               path = "/"
-              port = "hello-app-svc"
+              port = "paper-query-svc"
 
               http_header {
                 name  = "X-Custom-Header"
@@ -93,7 +93,7 @@ resource "kubernetes_deployment_v1" "default" {
 # This defines how our loadbalancer is configured
 resource "kubernetes_service_v1" "default" {
   metadata {
-    name = "example-hello-app-loadbalancer"
+    name = "paper-query-app-loadbalancer"
   }
 
   spec {
