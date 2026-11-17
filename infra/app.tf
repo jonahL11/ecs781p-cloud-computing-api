@@ -1,20 +1,3 @@
-/**
-* Copyright 2024 Google LLC
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-
-# [START gke_quickstart_autopilot_app]
 data "google_client_config" "default" {}
 
 provider "kubernetes" {
@@ -28,6 +11,8 @@ provider "kubernetes" {
   ]
 }
 
+# This defines a k8s workload, i.e. container(s) that is supposed to run
+# deploymet ensures enough/not too many replicas of pods run
 resource "kubernetes_deployment_v1" "default" {
   metadata {
     name = "example-hello-app-deployment"
@@ -105,6 +90,7 @@ resource "kubernetes_deployment_v1" "default" {
   }
 }
 
+# This defines how our loadbalancer is configured
 resource "kubernetes_service_v1" "default" {
   metadata {
     name = "example-hello-app-loadbalancer"
@@ -134,4 +120,3 @@ resource "time_sleep" "wait_service_cleanup" {
 
   destroy_duration = "180s"
 }
-# [END gke_quickstart_autopilot_app]
