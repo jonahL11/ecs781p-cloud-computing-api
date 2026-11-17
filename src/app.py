@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 #TODO FE: Signup/Login Forms
 #TODO BE: Signup/Login handling, DB interaction (local/dev DB like SQLite + Cloud DB)
-#TODO Infra: K8s cluster + Cloud DB
+#TODO infra: K8s cluster + Cloud DB
 @app.route('/', methods=['GET','POST'])
 def hello_world():
     #Testing HTML forms
@@ -60,4 +60,4 @@ def post_login():
 # route "/user/<user-id>
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5050)

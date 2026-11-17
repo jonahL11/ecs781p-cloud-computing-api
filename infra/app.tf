@@ -1,20 +1,3 @@
-/**
-* Copyright 2024 Google LLC
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*      http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-
-# [START gke_quickstart_autopilot_app]
 data "google_client_config" "default" {}
 
 provider "kubernetes" {
@@ -28,33 +11,35 @@ provider "kubernetes" {
   ]
 }
 
+# This defines a k8s workload, i.e. container(s) that is supposed to run
+# deploymet ensures enough/not too many replicas of pods run
 resource "kubernetes_deployment_v1" "default" {
   metadata {
-    name = "example-hello-app-deployment"
+    name = "paper-query-app-deployment"
   }
 
   spec {
     selector {
       match_labels = {
-        app = "hello-app"
+        app = "paper-query-app"
       }
     }
 
     template {
       metadata {
         labels = {
-          app = "hello-app"
+          app = "paper-query-app"
         }
       }
 
       spec {
         container {
-          image = "us-docker.pkg.dev/google-samples/containers/gke/hello-app:2.0"
-          name  = "hello-app-container"
+          image = "europe-west2-docker.pkg.dev/mini-project-781p/ecs781p-docker-repo/paper_query_app:v1"
+          name  = "paper-query-app"
 
           port {
-            container_port = 8080
-            name           = "hello-app-svc"
+            container_port = 5050
+            name           = "paper-query-svc"
           }
 
           security_context {
@@ -71,7 +56,7 @@ resource "kubernetes_deployment_v1" "default" {
           liveness_probe {
             http_get {
               path = "/"
-              port = "hello-app-svc"
+              port = "paper-query-svc"
 
               http_header {
                 name  = "X-Custom-Header"
@@ -105,9 +90,10 @@ resource "kubernetes_deployment_v1" "default" {
   }
 }
 
+# This defines how our loadbalancer is configured
 resource "kubernetes_service_v1" "default" {
   metadata {
-    name = "example-hello-app-loadbalancer"
+    name = "paper-query-app-loadbalancer"
   }
 
   spec {
@@ -134,4 +120,3 @@ resource "time_sleep" "wait_service_cleanup" {
 
   destroy_duration = "180s"
 }
-# [END gke_quickstart_autopilot_app]
