@@ -1,0 +1,9 @@
+// copy file and rename to <>.tfvars
+// DO NOT include secret variables in here like DB Password
+project-id = "<your-gcp-project-id>"
+deployment-region = "<your-gcp-deployment-region>" //like europe-west2
+
+app-name = "<your-app-name>"
+app-container-name = "<name-of-container-image-in-repo>"
+app-repo-name = "<your-repo-name>"
+app-container-tag = "<your-image-tag-to-deploy>"
