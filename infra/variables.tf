@@ -12,7 +12,6 @@ variable "deployment-region" {
 }
 
 // Database Information
-/*
 variable "db-password" {
   description = "root Db password, must be secure! Set in environment variables"
   type        = string
@@ -21,11 +20,10 @@ variable "db-password" {
 
 variable "db-version" {
   type = string
-  default = "MYSQL_8_0_26"
+  default = "MYSQL_8_4_11"
   description = "Pinning the DB version including type and version. TYPE_XX_XX_XX like MYSQL_8_0_26"
   sensitive = false
 }
- */
 
 // App/k8s workload Information
 variable "app-name" {
