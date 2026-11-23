@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, render_template
 from auth import authenticate
 from mock_api import mock_api
+import socket
 
 app = Flask(__name__)
 app.register_blueprint(mock_api)
@@ -65,6 +66,10 @@ def dashboard():
 # else allow entry of new password
 # PUT new password to user id i.e. email/username
 # route "/user/<user-id>
+
+@app.route('/api/health', methods=['GET'])
+def health():
+    return jsonify({"status":"ok","served_by": socket.gethostname()})
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5050)

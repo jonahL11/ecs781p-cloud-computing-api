@@ -1,7 +1,3 @@
-/**
- * dashboard.js - Load papers from REST API display on dashboard.
- */
-
 async function loadPapers(query = "") {
     const list = document.getElementById("paper-list");
   
@@ -63,3 +59,14 @@ searchInput.addEventListener("input", debounce(() => {
 
 // Load all papers
 loadPapers();
+
+async function loadServerInfo() {
+  try {
+    const response = await fetch("/api/health");
+    const data = await response.json();
+    document.getElementById("served-by").textContent = data.served_by;
+  } catch (error) {
+    document.getElementById("served-by").textContent = "unknown";
+  }
+}
+loadServerInfo();

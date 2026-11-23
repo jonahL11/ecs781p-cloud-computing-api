@@ -73,7 +73,9 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 999px;
-}
+} 
 .search:focus { outline: none; border-color: var(--accent); }
 
 .empty { color: var(--muted); padding: 20px 0; text-align: center; }
+
+.footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 24px 0; }
