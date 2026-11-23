@@ -1,0 +1,4 @@
+textual>=1.0
+requests>=2.31
+flask>=3.0        # only needed for mock_server.py
+textual-dev>=1.5  # optional: live CSS reload + debug console

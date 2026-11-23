@@ -1,0 +1,193 @@
+/*
+ * styles.tcss - Textual CSS for the frontend.
+ *
+ * Works like web CSS, but sizes are in terminal cells (1 = one character
+ * wide, or one line tall). Colours such as $primary, $accent and $error come
+ * from the active theme (set in app.py), so the whole app re-colours itself
+ * if you pick another theme with Ctrl+P -> "Change theme".
+ *
+ * Tip: run `textual run --dev app.py` and edits here appear instantly.
+ */
+
+/* ---------- Page ---------------------------------------------------------- */
+
+/* Centre the card. Screens scroll automatically if the terminal is short. */
+Screen {
+    align: center middle;
+    background: $background;
+}
+
+/* ---------- Card ---------------------------------------------------------- */
+
+#card {
+    width: 62;
+    max-width: 100%;
+    height: auto;
+    padding: 1 4;
+    background: $surface;
+    border: round $primary 60%;
+    border-title-align: center;
+    border-title-color: $accent;
+    border-title-style: bold;
+}
+
+#brand {
+    width: 100%;
+    text-align: center;
+    text-style: bold;
+    color: $primary;
+}
+
+#tagline {
+    width: 100%;
+    text-align: center;
+    color: $text-muted;
+    text-style: italic;
+}
+
+/* ---------- Log in | Sign up switcher ------------------------------------- */
+
+#tabs {
+    width: 100%;
+    height: 1;
+    align: center middle;
+    margin: 1 0;
+}
+
+/* Turn the tab buttons into plain text links. */
+Button.tab {
+    width: auto;
+    min-width: 0;
+    height: 1;
+    padding: 0 2;
+    border: none;
+    background: transparent;
+    color: $text-muted;
+    text-style: none;
+}
+
+Button.tab:hover,
+Button.tab:focus {
+    background: transparent;
+    color: $text;
+    text-style: underline;
+}
+
+Button.tab.current {
+    color: $accent;
+    text-style: bold underline;
+}
+
+.tab-divider {
+    width: auto;
+    color: $text-muted;
+}
+
+/* ---------- Fields -------------------------------------------------------- */
+
+.field-label {
+    color: $text;
+    text-style: bold;
+    padding-left: 1;
+}
+
+/* Password label + strength meter on one line. */
+.label-row {
+    height: 1;
+}
+
+.label-row .field-label {
+    width: 1fr;
+}
+
+Input {
+    width: 100%;
+    border: tall $panel-lighten-2;
+    background: $boost;
+}
+
+Input:focus {
+    border: tall $accent;
+}
+
+/* Textual adds -invalid / -valid after validation runs. */
+Input.-invalid {
+    border: tall $error 60%;
+}
+
+Input.-invalid:focus {
+    border: tall $error;
+}
+
+/* Error line under each field; hidden until there's something to say. */
+.field-error {
+    display: none;
+    height: auto;
+    color: $error;
+    padding-left: 1;
+}
+
+/* ---------- Password strength meter --------------------------------------- */
+
+#strength {
+    width: auto;
+    padding-right: 1;
+}
+
+#strength.s0 { color: $error; }
+#strength.s1 { color: $error; }
+#strength.s2 { color: $warning; }
+#strength.s3 { color: $success 70%; }
+#strength.s4 { color: $success; }
+
+/* ---------- Show password checkbox ---------------------------------------- */
+
+#show-password {
+    height: 1;
+    margin-top: 1;
+    padding: 0 1;
+    border: none;
+    background: transparent;
+    color: $text-muted;
+}
+
+#show-password:focus {
+    border: none;
+    background: transparent;
+    color: $text;
+}
+
+/* ---------- Banner message (server errors etc.) --------------------------- */
+
+#message {
+    display: none;
+    width: 100%;
+    height: auto;
+    margin-top: 1;
+    padding: 0 1;
+}
+
+#message.error {
+    color: $error;
+    background: $error 15%;
+    border-left: wide $error;
+}
+
+#message.success {
+    color: $success;
+    background: $success 15%;
+    border-left: wide $success;
+}
+
+#message.info {
+    color: $text;
+    background: $primary 15%;
+    border-left: wide $primary;
+}
+
+/* ---------- Main button --------------------------------------------------- */
+
+#submit, #logout {
+    width: 100%;
+    margin-top: 1;
+}
