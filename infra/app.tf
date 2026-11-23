@@ -17,8 +17,8 @@ locals {
 }
 
 # This defines a k8s workload, i.e. container(s) that is supposed to run
-# deploymet ensures enough/not too many replicas of pods run
-resource "kubernetes_deployment_v1" "default" {
+# deployment ensures enough/not too many replicas of pods run
+resource "kubernetes_deployment_v1" "app" {
   metadata {
     name = "${var.app-name}-app-deployment"
   }
@@ -38,6 +38,8 @@ resource "kubernetes_deployment_v1" "default" {
       }
 
       spec {
+        service_account_name = kubernetes_service_account_v1.app-ksa.metadata[0].name
+        # Container 1 our app
         container {
           image = local.app-container-full
           name  = "${var.app-name}-app"
@@ -45,6 +47,34 @@ resource "kubernetes_deployment_v1" "default" {
           port {
             container_port = 5050
             name           = "${var.app-name}-svc"
+          }
+
+          env {
+            # because we use the proxy its like its the same localhost
+            name  = "DB_HOST"
+            value = "127.0.0.1"
+          }
+          env {
+            name  = "DB_PORT"
+            value = "3306"
+          }
+          env {
+            name = "DB_USER"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret_v1.db-credentials.metadata[0].name
+                key  = "username"
+              }
+            }
+          }
+          env {
+            name = "DB_PASS"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret_v1.db-credentials.metadata[0].name
+                key  = "password"
+              }
+            }
           }
 
           security_context {
@@ -55,6 +85,10 @@ resource "kubernetes_deployment_v1" "default" {
             capabilities {
               add  = []
               drop = ["NET_RAW"]
+            }
+
+            seccomp_profile {
+              type = "RuntimeDefault"
             }
           }
 
@@ -73,13 +107,34 @@ resource "kubernetes_deployment_v1" "default" {
             period_seconds        = 3
           }
         }
+        # container 2 sql proxy as a sidecar
+        container {
+          name  = "cloud-sql-proxy"
+          image = "gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.14.1"
 
-        security_context {
-          run_as_non_root = true
+          args = [
+            "--structured-logs",
+            "--port=5432",
+            google_sql_database_instance.db_instance.connection_name
+          ]
 
-          seccomp_profile {
-            type = "RuntimeDefault"
+          security_context {
+            run_as_non_root = true
           }
+
+          resources {
+            requests = {
+              cpu    = "100m"
+              memory = "128Mi"
+            }
+            limits = {
+              cpu    = "200m"
+              memory = "256Mi"
+            }
+          }
+        }
+        security_context {
+          run_as_non_root            = true
         }
 
         # Toleration is currently required to prevent perpetual diff:
@@ -93,6 +148,10 @@ resource "kubernetes_deployment_v1" "default" {
       }
     }
   }
+  depends_on = [
+    google_service_account_iam_member.workload_identity_binding,
+    google_project_iam_member.cloudsql_client
+  ]
 }
 
 # This defines how our loadbalancer is configured
@@ -103,14 +162,14 @@ resource "kubernetes_service_v1" "default" {
 
   spec {
     selector = {
-      app = kubernetes_deployment_v1.default.spec[0].selector[0].match_labels.app
+      app = kubernetes_deployment_v1.app.spec[0].selector[0].match_labels.app
     }
 
     ip_family_policy = "RequireDualStack"
 
     port {
       port        = 80
-      target_port = kubernetes_deployment_v1.default.spec[0].template[0].spec[0].container[0].port[0].name
+      target_port = kubernetes_deployment_v1.app.spec[0].template[0].spec[0].container[0].port[0].name
     }
 
     type = "LoadBalancer"

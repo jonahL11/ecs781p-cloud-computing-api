@@ -1,26 +1,3 @@
-/*
-resource "google_sql_database_instance" "main" {
-  project = var.project-id
-  name             = "db-mysql-${var.project-id}"
-  region           = var.deployment-region
-  database_version = var.db_version
-  root_password    = var.db_password
-  settings {
-    tier = "db-f1-micro"
-    password_validation_policy {
-      min_length                  = 6
-      complexity                  = "COMPLEXITY_DEFAULT"
-      reuse_interval              = 2
-      disallow_username_substring = true
-      enable_password_policy      = true
-    }
-  }
-  # set `deletion_protection` to true, will ensure that one cannot accidentally delete this instance by
-  # use of Terraform whereas `deletion_protection_enabled` flag protects this instance at the GCP level.
-  deletion_protection = false
-}
-*/
-
 resource "google_compute_network" "default" {
   project = var.project-id
   name = "${var.project-id}-network"
