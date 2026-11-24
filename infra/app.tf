@@ -11,35 +11,40 @@ provider "kubernetes" {
   ]
 }
 
+locals {
+  app-container-base = "${var.deployment-region}-docker.pkg.dev/${var.project-id}/${var.app-repo-name}/${var.app-container-name}"
+  app-container-full = "${local.app-container-base}:${var.app-container-tag}"
+}
+
 # This defines a k8s workload, i.e. container(s) that is supposed to run
 # deploymet ensures enough/not too many replicas of pods run
 resource "kubernetes_deployment_v1" "default" {
   metadata {
-    name = "paper-query-app-deployment"
+    name = "${var.app-name}-app-deployment"
   }
 
   spec {
     selector {
       match_labels = {
-        app = "paper-query-app"
+        app = "${var.app-name}-app"
       }
     }
 
     template {
       metadata {
         labels = {
-          app = "paper-query-app"
+          app = "${var.app-name}-app"
         }
       }
 
       spec {
         container {
-          image = "europe-west2-docker.pkg.dev/mini-project-781p/ecs781p-docker-repo/paper_query_app:v1"
-          name  = "paper-query-app"
+          image = local.app-container-full
+          name  = "${var.app-name}-app"
 
           port {
             container_port = 5050
-            name           = "paper-query-svc"
+            name           = "${var.app-name}-svc"
           }
 
           security_context {
@@ -56,11 +61,11 @@ resource "kubernetes_deployment_v1" "default" {
           liveness_probe {
             http_get {
               path = "/"
-              port = "paper-query-svc"
+              port = "${var.app-name}-svc"
 
               http_header {
                 name  = "X-Custom-Header"
-                value = "Awesome"
+                value = "Check"
               }
             }
 
@@ -93,7 +98,7 @@ resource "kubernetes_deployment_v1" "default" {
 # This defines how our loadbalancer is configured
 resource "kubernetes_service_v1" "default" {
   metadata {
-    name = "paper-query-app-loadbalancer"
+    name = "${var.app-name}-app-loadbalancer"
   }
 
   spec {

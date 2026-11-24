@@ -1,9 +1,9 @@
 /*
-resource "google_sql_database_instance" "mysql_pvp_instance_name" {
-  project = "mini-project-781p"
-  name             = "mysql-pvp-instance-name"
-  region           = "europe-west2"
-  database_version = "MYSQL_8_0"
+resource "google_sql_database_instance" "main" {
+  project = var.project-id
+  name             = "db-mysql-${var.project-id}"
+  region           = var.deployment-region
+  database_version = var.db_version
   root_password    = var.db_password
   settings {
     tier = "db-f1-micro"
@@ -22,18 +22,18 @@ resource "google_sql_database_instance" "mysql_pvp_instance_name" {
 */
 
 resource "google_compute_network" "default" {
-  project = "mini-project-781p"
-  name = "mini-project-781p-network"
+  project = var.project-id
+  name = "${var.project-id}-network"
   auto_create_subnetworks  = false
   enable_ula_internal_ipv6 = true
 }
 
 resource "google_compute_subnetwork" "default" {
-  project = "mini-project-781p"
-  name = "mini-project-781p-subnetwork"
+  project = var.project-id
+  name = "${var.project-id}-subnetwork"
 
   ip_cidr_range = "10.0.0.0/16"
-  region        = "europe-west2"
+  region        = var.deployment-region
 
   stack_type       = "IPV4_IPV6"
   ipv6_access_type = "EXTERNAL" # we want to manage traffic from the outside
@@ -51,10 +51,10 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_container_cluster" "default" {
-  project = "mini-project-781p"
-  name = "mini-project-781p-autopilot-cluster"
+  project = var.project-id
+  name = "${var.project-id}-autopilot-cluster"
 
-  location                 = "europe-west2"
+  location                 = var.deployment-region
   enable_autopilot         = true
   enable_l4_ilb_subsetting = true
 
