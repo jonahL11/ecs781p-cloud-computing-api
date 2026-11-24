@@ -11,10 +11,13 @@
 
 /* ---------- Page ---------------------------------------------------------- */
 
-/* Centre the card. Screens scroll automatically if the terminal is short. */
 Screen {
-    align: center middle;
     background: $background;
+}
+
+/* Login / signup: centre the card. Screens scroll if the terminal is short. */
+FormScreen {
+    align: center middle;
 }
 
 /* ---------- Card ---------------------------------------------------------- */
@@ -187,7 +190,288 @@ Input.-invalid:focus {
 
 /* ---------- Main button --------------------------------------------------- */
 
-#submit, #logout {
+#submit {
     width: 100%;
     margin-top: 1;
+}
+
+
+/* ========================================================================= */
+/*  Logged-in pages: sidebar + content (navigation.py, favourites_page.py)   */
+/* ========================================================================= */
+
+#layout {
+    height: 1fr;
+}
+
+/* ---------- Sidebar ------------------------------------------------------- */
+
+#sidebar {
+    width: 26;
+    height: 100%;
+    padding: 1 1;
+    background: $panel;
+    border-right: vkey $primary 40%;
+}
+
+#sidebar-brand {
+    width: 100%;
+    text-style: bold;
+    color: $primary;
+    padding: 0 1;
+    margin-bottom: 1;
+}
+
+/* Sidebar items look like menu rows, not chunky buttons. */
+Button.nav {
+    width: 100%;
+    min-width: 0;
+    height: 1;
+    padding: 0 1;
+    margin-bottom: 1;
+    border: none;
+    background: transparent;
+    color: $text-muted;
+    text-align: left;
+    content-align: left middle;
+    text-style: none;
+}
+
+Button.nav:hover,
+Button.nav:focus {
+    background: $boost;
+    color: $text;
+}
+
+Button.nav.current {
+    background: $primary 25%;
+    color: $text;
+    text-style: bold;
+}
+
+#sidebar-spacer {
+    height: 1fr;
+}
+
+#nav-logout {
+    color: $error;
+}
+
+#nav-logout:hover,
+#nav-logout:focus {
+    background: $error 20%;
+}
+
+/* ---------- Page content -------------------------------------------------- */
+
+#content {
+    width: 1fr;
+    height: 100%;
+    padding: 1 3;
+}
+
+#page-title {
+    text-style: bold;
+    color: $accent;
+    margin-bottom: 1;
+}
+
+#result-count {
+    color: $text-muted;
+    height: auto;
+    margin-bottom: 1;
+}
+
+/* ---------- Paper cards --------------------------------------------------- */
+
+.paper-list {
+    height: 1fr;
+}
+
+.paper {
+    height: auto;
+    padding: 0 1;
+    margin-bottom: 1;
+    background: $surface;
+    border-left: wide $primary 50%;
+}
+
+.paper:hover {
+    background: $boost;
+}
+
+.paper-info {
+    width: 1fr;
+    height: auto;
+}
+
+.paper-title {
+    text-style: bold;
+    color: $text;
+}
+
+.paper-meta {
+    color: $text-muted;
+}
+
+.paper-cites {
+    color: $accent;
+}
+
+/* Favourite toggle: a bordered button with a star and a word, so it is
+   easy to see and click (terminals can't make one character bigger). */
+Button.fav-toggle {
+    width: 13;
+    min-width: 13;
+    height: 3;
+    margin-left: 1;
+    border: round $panel-lighten-2;
+    background: transparent;
+    color: $text-muted;
+    text-style: bold;
+    content-align: center middle;
+}
+
+Button.fav-toggle:hover,
+Button.fav-toggle:focus {
+    background: $warning 15%;
+    border: round $warning;
+    color: $warning;
+}
+
+Button.fav-toggle.saved {
+    border: round $warning;
+    background: $warning 20%;
+    color: $warning;
+}
+
+Button.remove {
+    width: auto;
+    min-width: 0;
+    margin-left: 1;
+}
+
+/* ---------- Empty states -------------------------------------------------- */
+
+.empty-state {
+    height: auto;
+    padding: 2 2;
+    color: $text-muted;
+    text-align: center;
+    border: dashed $panel-lighten-2;
+}
+
+#empty-title {
+    text-style: bold;
+    color: $text;
+    margin-bottom: 1;
+}
+
+.hint {
+    margin-top: 1;
+    color: $text-muted;
+    text-style: italic;
+}
+
+.hint {
+    margin-bottom: 1;
+}
+
+/* Generic "nothing here" box. */
+.placeholder {
+    height: auto;
+    padding: 2 2;
+    color: $text-muted;
+    text-style: italic;
+    border: dashed $panel-lighten-2;
+    text-align: center;
+}
+
+.welcome {
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+.section-title {
+    text-style: bold;
+    color: $accent;
+    margin-bottom: 1;
+}
+
+/* ---------- My Profile ---------------------------------------------------- */
+
+#profile {
+    height: 1fr;
+}
+
+#profile-header {
+    height: 5;
+    margin-bottom: 1;
+}
+
+#avatar {
+    width: 11;
+    height: 5;
+    content-align: center middle;
+    text-style: bold;
+    color: $background;
+    background: $accent;
+    border: round $accent;
+}
+
+#profile-name-block {
+    width: 1fr;
+    height: 5;
+    padding: 1 2;
+}
+
+#profile-name {
+    text-style: bold;
+    color: $text;
+}
+
+#profile-email {
+    color: $text-muted;
+}
+
+.profile-section {
+    width: 70;
+    max-width: 100%;
+    height: auto;
+    padding: 1 2;
+    margin-bottom: 1;
+    background: $surface;
+    border: round $primary 40%;
+}
+
+.profile-row {
+    height: 1;
+}
+
+.profile-label {
+    width: 16;
+    color: $text-muted;
+}
+
+.profile-value {
+    width: 1fr;
+    text-style: bold;
+}
+
+#recent-saved {
+    height: auto;
+    margin-top: 1;
+    color: $text-muted;
+}
+
+#edit-row {
+    height: auto;
+}
+
+#new-username {
+    width: 1fr;
+}
+
+#save-username {
+    margin-left: 1;
 }

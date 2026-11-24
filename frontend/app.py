@@ -6,7 +6,8 @@ Terminal frontend for our Google-Scholar-style app, built with Textual.
 Screens:
   LoginScreen   - email + password, calls POST /api/login
   SignupScreen  - username, email, password, confirm, calls POST /api/signup
-  HomeScreen    - shown after a successful login/signup (search goes here next)
+  After login: sidebar pages (navigation.py). My Favourites is in
+  favourites_page.py and My Profile in profile_page.py.
 
 Flow (matches the team's Login/Signup diagram):
   User fills in a form -> the form is validated on the client (validators.py)
@@ -36,6 +37,10 @@ from textual.screen import Screen
 from textual.widgets import Button, Checkbox, Footer, Input, Label, Static
 
 import api_client
+from favourites import FavouritesStore
+from navigation import DashboardScreen
+import favourites_page  # noqa: F401  registers the My Favourites page with the sidebar
+import profile_page  # noqa: F401  registers the My Profile page with the sidebar
 from validators import (
     EMAIL_MAX,
     PASSWORD_MAX,
@@ -344,38 +349,6 @@ class SignupScreen(FormScreen):
 
 
 # --------------------------------------------------------------------------- #
-# Home (placeholder - the paper search screen will be built here next)
-# --------------------------------------------------------------------------- #
-class HomeScreen(Screen):
-    """Shown once the user is logged in."""
-
-    def compose(self) -> ComposeResult:
-        username = self.app.session.get("username", "researcher")
-        with Vertical(id="card") as card:
-            card.border_title = f"Hello, {username}"
-            yield from brand()
-            yield Label("Search papers", classes="field-label")
-            yield Input(placeholder="e.g. transformers for protein folding", id="search")
-            yield Static("", id="message")
-            yield Button("Log out", variant="error", id="logout")
-        yield Footer()
-
-    def on_mount(self) -> None:
-        self.query_one("#search", Input).focus()
-
-    @on(Input.Submitted, "#search")
-    def search(self) -> None:
-        message = self.query_one("#message", Static)
-        message.set_classes("info")
-        message.update("Search isn't wired up yet — that's the next screen to build.")
-        message.display = True
-
-    @on(Button.Pressed, "#logout")
-    def logout(self) -> None:
-        self.app.end_session()
-
-
-# --------------------------------------------------------------------------- #
 # The application
 # --------------------------------------------------------------------------- #
 class ScholarApp(App):
@@ -390,6 +363,8 @@ class ScholarApp(App):
         # Filled in after login/signup: {"user_id": ..., "username": ..., "token": ...}
         # Later requests send the token in an "Authorization: Bearer <token>" header.
         self.session: dict = {}
+        # Temporary local favourites (see favourites.py) until the backend has them.
+        self.favourites = FavouritesStore()
 
     def on_mount(self) -> None:
         # Built-in colour theme. Try others with Ctrl+P -> "Change theme".
@@ -400,7 +375,7 @@ class ScholarApp(App):
         """Called after a successful login or signup."""
         self.session = data
         self.notify(f"Logged in as {data.get('username', 'user')}", title="Welcome")
-        self.switch_screen(HomeScreen())
+        self.switch_screen(DashboardScreen())
 
     def end_session(self) -> None:
         self.session = {}

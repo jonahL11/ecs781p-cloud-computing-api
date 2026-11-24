@@ -33,7 +33,8 @@ def _issue_token(user: dict) -> dict:
     """Create a random session token and return the JSON sent to the client."""
     token = secrets.token_hex(32)
     SESSIONS[token] = user["user_id"]
-    return {"user_id": user["user_id"], "username": user["username"], "token": token}
+    return {"user_id": user["user_id"], "username": user["username"],
+            "email": user["email"], "token": token}
 
 
 @app.post("/api/signup")
@@ -60,6 +61,7 @@ def signup():
     user = {
         "user_id": len(USERS) + 1,
         "username": username,
+        "email": email,
         "password_hash": generate_password_hash(password),
     }
     USERS[email] = user
