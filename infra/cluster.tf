@@ -1,3 +1,14 @@
+# reserve global STATIC ip for load balancing
+resource "google_compute_global_address" "default" {
+  project = var.project-id
+  name = "global-${var.app-name}-ip"
+}
+# output IP so that it can be added to DNS service
+output "load_balancer_ip" {
+  value       = google_compute_global_address.default.address
+  description = "IP required for DNS"
+}
+
 resource "google_compute_network" "default" {
   project = var.project-id
   name = "${var.project-id}-network"
