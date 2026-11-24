@@ -35,7 +35,7 @@ async function loadPapers(query = "") {
     const details = document.createElement("div");
     details.className = "paper-meta";
     details.textContent =
-      paper.authors.join(", ") + " · " + paper.venue + " · " + paper.year +
+      [paper.authors.join(", "), paper.venue, paper.year].filter(Boolean).join(" · ") +
       " · Cited by " + paper.citations.toLocaleString();
   
     li.appendChild(title);
@@ -56,6 +56,66 @@ const searchInput = document.getElementById("search-input");
 searchInput.addEventListener("input", debounce(() => {
   loadPapers(searchInput.value.trim());
 }));
+
+const modal = document.getElementById("paper-modal");
+const form = document.getElementById("paper-form");
+const formError = document.getElementById("form-error");
+
+document.getElementById("add-paper-btn").addEventListener("click", () => {
+  form.reset();                // clear anything typed last time
+  formError.textContent = "";  // clear old error messages
+  modal.showModal();
+});
+
+document.getElementById("cancel-btn").addEventListener("click", () => modal.close());
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault(); 
+  const body = Object.fromEntries(new FormData(form));
+
+  try {
+    const response = await fetch("/api/papers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const data = await response.json();
+
+    if (response.status !== 201) {
+      formError.textContent = data.error; 
+      return;
+    }
+    modal.close();
+    loadPapers(searchInput.value.trim());
+  } catch (error) {
+    formError.textContent = "Couldn't save: " + error.message;
+  }
+});
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const body = Object.fromEntries(new FormData(form));
+
+  try {
+    const response = await fetch("/api/papers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const data = await response.json();
+
+    if (response.status !== 201) {
+      formError.textContent = data.error;
+      return;
+    }
+    modal.close();
+    loadPapers(searchInput.value.trim());
+  } catch (error) {
+    formError.textContent = "Couldn't save: " + error.message;
+  }
+});
+
 
 // Load all papers
 loadPapers();

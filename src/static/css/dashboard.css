@@ -1,7 +1,8 @@
 /* dashboard.css - Styles for the dashboard page. */
 
-/* Colours and fonts
-   :root {
+
+  /*Colours*/ 
+  :root {
     --bg: #f6f5f1;
     --surface: #ffffff;
     --border: #e2dfd6;
@@ -13,7 +14,7 @@
     --font-head: "Source Serif 4", Georgia, serif;
   }
   
-  /* Dark mode: same variables, different values */
+  /* Dark mode */
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #151513;
@@ -37,10 +38,10 @@
   h1 { font-size: 2rem; }
   .muted { color: var(--muted); margin-top: 0; }
   
-  /* Centre the content */
+  /* Centre content */
   .main { max-width: 900px; margin: 0 auto; padding: 32px 20px; }
   
-  /* White card around the list */
+  /* White card around list */
   .panel {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -49,7 +50,7 @@
     margin-top: 24px;
   }
   
-  /* Remove bullet points and add a line between papers */
+  /* add a line between papers */
   .paper-list { list-style: none; margin: 0; padding: 0; }
   .paper { padding: 14px 0; border-bottom: 1px solid var(--border); }
   .paper:last-child { border-bottom: 0; }
@@ -79,3 +80,66 @@
 .empty { color: var(--muted); padding: 20px 0; text-align: center; }
 
 .footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 24px 0; }
+
+/* Buttons */
+.btn {
+  font: inherit; cursor: pointer; padding: 9px 16px; border-radius: 8px;
+  border: 1px solid var(--border); background: none; color: var(--text);
+}
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+#add-paper-btn { margin-top: 20px; }
+
+/* Pop-up form */
+.modal {
+  width: min(480px, 92vw); padding: 24px; border-radius: 12px;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text);
+}
+.modal::backdrop { background: rgba(0, 0, 0, 0.5); }
+.modal form { display: flex; flex-direction: column; gap: 12px; }
+.modal label { display: flex; flex-direction: column; gap: 4px; font-size: 0.88rem; }
+.modal input {
+  font: inherit; padding: 8px 10px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--bg); color: var(--text);
+}
+.modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.form-error { color: #e5534b; margin: 0; min-height: 1.2em; }
+
+.menu-btn {
+  position: fixed; top: 16px; left: 16px; z-index: 30;
+  width: 42px; height: 42px; border-radius: 10px;
+  font-size: 1.3rem; cursor: pointer;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border);
+}
+.menu-btn:hover { border-color: var(--accent); }
+
+.sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0; z-index: 50;
+  width: 240px; padding: 24px 16px;
+  background: var(--surface); border-right: 1px solid var(--border);
+  transform: translateX(-100%);  
+  transition: transform 0.25s ease; 
+}
+.sidebar.open { transform: translateX(0); } 
+
+.brand {
+  font-family: var(--font-head); font-size: 1.3rem; font-weight: 600;
+  margin: 0 0 24px 8px;
+}
+
+.nav { display: flex; flex-direction: column; gap: 4px; }
+.nav-item {
+  font: inherit; text-align: left; cursor: pointer;
+  padding: 10px 12px; border: 0; border-radius: 8px;
+  background: none; color: var(--muted);
+}
+.nav-item:hover { color: var(--text); background: var(--bg); }
+.nav-item.active { color: var(--accent); background: var(--bg); font-weight: 500; }
+
+.overlay {
+  position: fixed; inset: 0; z-index: 40;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0; pointer-events: none; 
+  transition: opacity 0.25s ease;
+}
+.overlay.show { opacity: 1; pointer-events: auto; }

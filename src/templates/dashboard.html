@@ -8,9 +8,20 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
       </head>
       <body>
+        <button class="menu-btn" id="menu-btn" aria-label="Open menu">☰</button>
+        <aside class="sidebar" id="sidebar">
+          <div class="brand">PaperBase</div>
+          <nav class="nav">
+            <button class="nav-item active" data-view="all">All papers</button>
+            <button class="nav-item" data-view="library">My library</button>
+            <button class="nav-item" data-view="discover">Discover</button>
+          </nav>
+        </aside>
+        <div class="overlay" id="overlay"></div>
         <main class="main">
           <h1>Welcome</h1>
           <p class="muted">Your paper dashboard.</p>
+          <button class="btn btn-primary" id ="add-paper-btn">+ Add paper</button>
           <input type="search" id="search-input" class="search"
            placeholder="Search titles, authors, venues…" autocomplete="off">
           <section class="panel">
@@ -20,6 +31,22 @@
             </ul>
           </section>
         </main>
+
+        <dialog class="modal" id="paper-modal">
+          <form id="paper-form">
+            <h2>Add paper</h2>
+            <label>Title* <input name="title"></label>
+            <label>Authors (comma separated) <input name="authors"></label>
+            <label>Year <input name="year" type="number"></label>
+            <label>Venue <input name="venue"></label>
+            <label>Citations <input name="citations" type="number"></label>
+            <p class="form-error" id="form-error"></p>
+            <div class="modal-actions">
+              <button type="button" class="btn" id="cancel-btn">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+          </form>
+        </dialog>
 
         <footer class="footer">Served by <span id="served-by">...</span></footer>
       
