@@ -49,3 +49,9 @@ variable "app-container-tag" {
   description = "Version/tag of container version like 'latest' or 'v1'"
   sensitive = false
 }
+
+variable "domain-name" {
+  type = string
+  description = "Domain under which the app is supposed to be available. Needed for SSL cert"
+  sensitive = false
+}

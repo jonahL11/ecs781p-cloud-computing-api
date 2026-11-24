@@ -7,3 +7,5 @@ app-name = "<your-app-name>"
 app-container-name = "<name-of-container-image-in-repo>"
 app-repo-name = "<your-repo-name>"
 app-container-tag = "<your-image-tag-to-deploy>"
+
+domain-name = "<your-domain-name-for-app>"
