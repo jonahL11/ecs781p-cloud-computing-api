@@ -1,0 +1,26 @@
+<!doctype html>
+<!--
+  base.html - The shared skeleton every page builds on.
+  Fonts, the stylesheet and the API helper are loaded once here, so the
+  login, signup and dashboard pages only have to fill in their own content.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Daily Query{% endblock %} · Daily Query</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  </head>
+  <body class="{% block body_class %}{% endblock %}">
+    {% block content %}{% endblock %}
+
+    <!-- Small pop-up message used by every page ("Saved", "Deleted"...). -->
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <!-- api.js must come first: the page scripts rely on it. -->
+    <script src="{{ url_for('static', filename='js/api.js') }}"></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

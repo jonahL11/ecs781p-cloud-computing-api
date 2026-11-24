@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{#
+  app_dashboard.html - The main app once you're logged in.
+  Built on the team's original dashboard (sidebar, panels, search box, modal)
+  and extended with the views from our architecture diagram:
+    Search      -> GET /api/search          (Semantic Scholar via our server)
+    My library  -> GET/PUT/DELETE /api/favorites
+    My account  -> GET/PUT /api/users/<my id>
+    Users       -> admin only: GET /api/users, PUT/DELETE /api/users/<id>
+#}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Top bar: menu button (small screens), brand, who's logged in, log out. -->
+<header class="topbar">
+  <button class="menu-btn" id="menu-btn" aria-label="Open menu">☰</button>
+  <div class="brand">Daily Query</div>
+  <div class="topbar-user">
+    <span id="whoami" class="muted"></span>
+    <button class="btn btn-small" id="logout-btn">Log out</button>
+  </div>
+</header>
+
+<!-- Sidebar: slides in on phones, always visible on wide screens. -->
+<aside class="sidebar" id="sidebar">
+  <div class="brand sidebar-brand">Daily Query</div>
+  <nav class="nav">
+    <button class="nav-item active" data-view="search">Search</button>
+    <button class="nav-item" data-view="library">My library</button>
+    <button class="nav-item" data-view="account">My account</button>
+    <!-- Hidden unless the logged-in user is an admin (app.js decides). -->
+    <button class="nav-item hidden" data-view="users" id="users-nav">Users</button>
+  </nav>
+</aside>
+<div class="overlay" id="overlay"></div>
+
+<main class="main">
+
+  <!-- ===== Search ===== -->
+  <section class="view" id="search-view">
+    <h1>Find papers</h1>
+    <p class="muted">Search millions of papers through Semantic Scholar.</p>
+    <input type="search" id="search-input" class="search"
+           placeholder="Search titles, authors, topics…" autocomplete="off">
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Results</h2>
+        <span class="muted small" id="result-count"></span>
+      </div>
+      <ul class="paper-list" id="search-results">
+        <li class="empty">Type something above to start searching.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== My library (favourites) ===== -->
+  <section class="view hidden" id="library-view">
+    <h1>My library</h1>
+    <p class="muted">Papers you've starred. Only you can see these.</p>
+    <div class="panel">
+      <ul class="paper-list" id="library-list">
+        <li class="empty">Loading…</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== My account ===== -->
+  <section class="view hidden" id="account-view">
+    <h1>My account</h1>
+    <p class="muted">Update your details or change your password.</p>
+
+    <!-- Your details -->
+    <section class="panel narrow">
+      <h2>Your details</h2>
+      <p class="muted small">This is how you appear to other users.</p>
+      <form id="account-form" class="stack" novalidate>
+        <label>Username
+          <input name="username" autocomplete="username" maxlength="20" required>
+          <span class="field-error" data-error-for="username"></span>
+        </label>
+        <label>Email
+          <input name="email" type="email" autocomplete="email" required>
+          <span class="field-error" data-error-for="email"></span>
+        </label>
+        <p class="form-error" id="account-error"></p>
+        <div><button type="submit" class="btn btn-primary">Save changes</button></div>
+      </form>
+    </section>
+
+    <!-- Change password -->
+    <section class="panel narrow">
+      <h2>Change password</h2>
+      <p class="muted small">At least 8 characters, with a capital letter and a special character.</p>
+      <form id="password-form" class="stack" novalidate>
+        <label>Current password
+          <span class="pw-field">
+            <input name="current_password" type="password" autocomplete="current-password" required>
+            <button type="button" class="pw-toggle" aria-label="Show password">Show</button>
+          </span>
+          <span class="field-error" data-error-for="current_password"></span>
+        </label>
+        <label>New password
+          <span class="pw-field">
+            <input name="new_password" type="password" autocomplete="new-password" required>
+            <button type="button" class="pw-toggle" aria-label="Show password">Show</button>
+          </span>
+          <span class="field-error" data-error-for="new_password"></span>
+        </label>
+        <label>Confirm new password
+          <span class="pw-field">
+            <input name="confirm_password" type="password" autocomplete="new-password" required>
+            <button type="button" class="pw-toggle" aria-label="Show password">Show</button>
+          </span>
+          <span class="field-error" data-error-for="confirm_password"></span>
+        </label>
+        <p class="form-error" id="password-error"></p>
+        <div><button type="submit" class="btn btn-primary">Update password</button></div>
+      </form>
+    </section>
+  </section>
+
+  <!-- ===== Users (admin only) ===== -->
+  <section class="view hidden" id="users-view">
+    <h1>Users</h1>
+    <p class="muted">Everyone with an account. Admins only.</p>
+    <div class="panel">
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th></th></tr>
+          </thead>
+          <tbody id="users-body">
+            <tr><td colspan="5" class="empty">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Pop-up for an admin editing someone else's account. -->
+<dialog class="modal" id="user-modal">
+  <form id="user-form" class="stack" novalidate>
+    <h2>Edit user</h2>
+    <input type="hidden" name="id">
+    <label>Username <input name="username" required></label>
+    <label>Email <input name="email" type="email" required></label>
+    <label>Role
+      <select name="role">
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      </select>
+    </label>
+    <label>New password <input name="password" type="password" placeholder="Leave blank to keep"></label>
+    <p class="form-error" id="user-error"></p>
+    <div class="modal-actions">
+      <button type="button" class="btn" data-close>Cancel</button>
+      <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- "Are you sure?" pop-up before deleting a user. -->
+<dialog class="modal" id="confirm-modal">
+  <form method="dialog" class="stack">
+    <h2>Delete user?</h2>
+    <p id="confirm-text"></p>
+    <div class="modal-actions">
+      <button value="cancel" class="btn">Cancel</button>
+      <button value="ok" class="btn btn-danger">Delete</button>
+    </div>
+  </form>
+</dialog>
+
+<footer class="footer">Served by <span id="served-by">…</span></footer>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% endblock %}

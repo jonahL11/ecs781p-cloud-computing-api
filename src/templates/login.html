@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{# login.html - Log-in page. Each field shows its own red error underneath. #}
+
+{% block title %}Log in{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+
+{% block content %}
+<main class="auth-card">
+  <div class="brand brand-lg">Daily Query</div>
+  <p class="muted">Search, save and revisit research papers.</p>
+
+  <!-- novalidate: we show our own friendly errors instead of the browser's. -->
+  <form id="login-form" class="stack" novalidate>
+    <label>Username
+      <input name="username" autocomplete="username" required autofocus>
+      <span class="field-error" data-error-for="username"></span>
+    </label>
+    <label>Password
+      <input name="password" type="password" autocomplete="current-password" required>
+      <span class="field-error" data-error-for="password"></span>
+    </label>
+    <!-- "Wrong username or password" goes here, since we deliberately
+         don't say which of the two was wrong. -->
+    <p class="form-error" id="form-error"></p>
+    <button type="submit" class="btn btn-primary btn-block">Log in</button>
+  </form>
+
+  <p class="auth-switch">New here? <a href="{{ url_for('get_signup') }}">Create an account</a></p>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+{% endblock %}

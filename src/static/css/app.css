@@ -1,0 +1,283 @@
+/* app.css - Styles for every page (login, signup and dashboard).
+   Started from the team's original dashboard styles; new parts are grouped
+   under their own headings further down. */
+
+/* ---------- Colours ---------- */
+/* Change a colour here and it updates everywhere. */
+:root {
+  --bg: #f6f5f1;
+  --surface: #ffffff;
+  --border: #e2dfd6;
+  --text: #1d1c1a;
+  --muted: #6b6860;
+  --accent: #1f4e8c;
+  --green: #1e7a46;
+  --danger: #c0392b;
+  --star: #d4a017;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-head: "Source Serif 4", Georgia, serif;
+  --sidebar-w: 240px;
+  --topbar-h: 60px;
+}
+
+/* Dark mode follows the user's system setting automatically. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #151513;
+    --surface: #1e1e1b;
+    --border: #34332f;
+    --text: #ecebe6;
+    --muted: #a19e95;
+    --accent: #7fa9e6;
+    --green: #6fcf97;
+    --danger: #e5534b;
+    --star: #f2c94c;
+  }
+}
+
+/* ---------- Basics ---------- */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.5 var(--font-body);
+}
+
+h1, h2 { font-family: var(--font-head); font-weight: 600; margin: 0 0 8px; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.25rem; }
+a { color: var(--accent); }
+.muted { color: var(--muted); margin-top: 0; }
+.small { font-size: 0.85rem; }
+
+/* The JS hides things by adding this class (it was missing before, which is
+   why the old tabs never actually hid anything). */
+.hidden { display: none !important; }
+
+/* ---------- Top bar ---------- */
+.topbar {
+  position: sticky; top: 0; z-index: 20;
+  height: var(--topbar-h);
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.topbar-user { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.topbar-user .muted { margin: 0; font-size: 0.9rem; }
+
+.brand { font-family: var(--font-head); font-size: 1.3rem; font-weight: 600; }
+.brand-lg { font-size: 1.8rem; margin-bottom: 4px; }
+
+.menu-btn {
+  width: 40px; height: 40px; border-radius: 10px;
+  font-size: 1.2rem; cursor: pointer;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border);
+}
+.menu-btn:hover { border-color: var(--accent); }
+
+/* ---------- Sidebar ---------- */
+/* On phones it slides in from the left; on wide screens it's always shown. */
+.sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0; z-index: 50;
+  width: var(--sidebar-w); padding: 20px 16px;
+  background: var(--surface); border-right: 1px solid var(--border);
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+}
+.sidebar.open { transform: translateX(0); }
+.sidebar-brand { margin: 0 0 24px 8px; }
+
+.nav { display: flex; flex-direction: column; gap: 4px; }
+.nav-item {
+  font: inherit; text-align: left; cursor: pointer;
+  padding: 10px 12px; border: 0; border-radius: 8px;
+  background: none; color: var(--muted);
+}
+.nav-item:hover { color: var(--text); background: var(--bg); }
+.nav-item.active { color: var(--accent); background: var(--bg); font-weight: 500; }
+
+/* Dark see-through layer behind the open sidebar on phones. */
+.overlay {
+  position: fixed; inset: 0; z-index: 40;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.overlay.show { opacity: 1; pointer-events: auto; }
+
+/* Wide screens: pin the sidebar open and push everything else right. */
+@media (min-width: 1000px) {
+  .sidebar { transform: none; top: 0; }
+  .overlay, .menu-btn { display: none; }
+  body:not(.auth-page) { padding-left: var(--sidebar-w); }
+  .topbar .brand { visibility: hidden; } /* already shown in the sidebar */
+}
+
+/* ---------- Page content ---------- */
+.main { max-width: 900px; margin: 0 auto; padding: 32px 20px; }
+
+/* White card around lists and forms. */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 24px;
+}
+.panel.narrow { max-width: 480px; }
+.panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+
+/* ---------- Search box ---------- */
+.search {
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px 18px;
+  font: inherit;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+.search:focus { outline: none; border-color: var(--accent); }
+
+/* ---------- Paper list ---------- */
+.paper-list { list-style: none; margin: 0; padding: 0; }
+.paper {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px 0; border-bottom: 1px solid var(--border);
+}
+.paper:last-child { border-bottom: 0; }
+.paper-body { flex: 1; min-width: 0; }
+
+.paper-title {
+  display: block;
+  font-family: var(--font-head);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+a.paper-title:hover { text-decoration: underline; }
+.paper-meta { color: var(--green); font-size: 0.88rem; }
+
+/* Star button to save / unsave a paper. */
+.star {
+  flex: none; width: 36px; height: 36px; border-radius: 50%;
+  font-size: 1.3rem; line-height: 1; cursor: pointer;
+  background: none; border: 1px solid transparent; color: var(--muted);
+}
+.star:hover { border-color: var(--border); color: var(--star); }
+.star.saved { color: var(--star); }
+.star:disabled { opacity: 0.5; cursor: wait; }
+
+.empty { color: var(--muted); padding: 20px 0; text-align: center; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  font: inherit; cursor: pointer; padding: 9px 16px; border-radius: 8px;
+  border: 1px solid var(--border); background: none; color: var(--text);
+}
+.btn:hover { border-color: var(--accent); }
+.btn:disabled { opacity: 0.6; cursor: wait; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.btn-danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+.btn-danger-outline { color: var(--danger); }
+.btn-danger-outline:hover { border-color: var(--danger); }
+.btn-small { padding: 5px 12px; font-size: 0.85rem; }
+.btn-block { width: 100%; }
+
+/* ---------- Forms ---------- */
+.stack { display: flex; flex-direction: column; gap: 12px; }
+.stack label { display: flex; flex-direction: column; gap: 4px; font-size: 0.88rem; }
+.stack input, .stack select {
+  font: inherit; padding: 9px 11px; border-radius: 8px;
+  border: 1px solid var(--border); background: var(--bg); color: var(--text);
+}
+.stack input:focus, .stack select:focus { outline: none; border-color: var(--accent); }
+.form-error { color: var(--danger); margin: 0; min-height: 1.2em; font-size: 0.88rem; }
+
+/* ---------- Login / signup pages ---------- */
+.auth-page {
+  min-height: 100vh;
+  display: grid; place-items: center;
+  padding: 20px;
+}
+.auth-card {
+  width: min(400px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 32px 28px;
+}
+.auth-switch { text-align: center; color: var(--muted); font-size: 0.9rem; margin: 20px 0 0; }
+
+/* ---------- Users table ---------- */
+.table-wrap { overflow-x: auto; } /* lets the table scroll sideways on phones */
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td {
+  text-align: left; padding: 10px 8px;
+  border-bottom: 1px solid var(--border);
+}
+.table th { color: var(--muted); font-weight: 500; font-size: 0.85rem; }
+.table tr:last-child td { border-bottom: 0; }
+.row-actions { text-align: right; white-space: nowrap; }
+.row-actions .btn + .btn { margin-left: 6px; }
+
+.badge {
+  display: inline-block; padding: 2px 8px; border-radius: 999px;
+  font-size: 0.78rem; background: var(--bg); color: var(--muted);
+  border: 1px solid var(--border);
+}
+.badge-admin { color: var(--accent); border-color: var(--accent); }
+
+/* ---------- Pop-up dialogs ---------- */
+.modal {
+  width: min(440px, 92vw); padding: 24px; border-radius: 12px;
+  border: 1px solid var(--border); background: var(--surface); color: var(--text);
+}
+.modal::backdrop { background: rgba(0, 0, 0, 0.5); }
+.modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+/* ---------- Toast message ---------- */
+.toast {
+  position: fixed; left: 50%; bottom: 24px; z-index: 100;
+  transform: translate(-50%, 20px);
+  padding: 10px 18px; border-radius: 8px;
+  background: var(--text); color: var(--bg); font-size: 0.9rem;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- Footer ---------- */
+.footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 24px 0; }
+/* ---------- Validation messages ---------- */
+
+/* Small grey help text under a form field. */
+.hint { color: var(--muted); font-size: 0.78rem; }
+
+/* Red message directly under the field it belongs to.
+   It takes no space when empty, so the form doesn't jump around. */
+.field-error { color: var(--danger); font-size: 0.8rem; }
+.field-error:empty { display: none; }
+
+/* Red outline on a field that failed validation. */
+.stack input[aria-invalid="true"] { border-color: var(--danger); }
+
+/* Password box with a "Show" / "Hide" button inside it, on the right. */
+.pw-field { position: relative; display: flex; }
+.pw-field input { flex: 1; min-width: 0; padding-right: 64px; }
+.pw-toggle {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  font: inherit; font-size: 0.8rem; cursor: pointer;
+  padding: 4px 8px; border: 0; border-radius: 6px;
+  background: none; color: var(--accent);
+}
+.pw-toggle:hover { background: var(--surface); }
+
+/* A heading and short note at the top of a form panel. */
+.panel h2 + .muted { margin-bottom: 16px; }

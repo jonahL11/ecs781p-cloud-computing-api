@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{# signup.html - Create-account page. Posts to /api/signup (see auth.js).
+   Each field has its own red error line underneath (the .field-error span),
+   which auth.js fills in only when that field isn't valid. #}
+
+{% block title %}Sign up{% endblock %}
+{% block body_class %}auth-page{% endblock %}
+
+{% block content %}
+<main class="auth-card">
+  <div class="brand brand-lg">Daily Query</div>
+  <p class="muted">Create your account.</p>
+
+  <form id="signup-form" class="stack" novalidate>
+    <label>Username
+      <input name="username" autocomplete="username" maxlength="20" required autofocus>
+      <span class="field-error" data-error-for="username"></span>
+    </label>
+
+    <label>Email
+      <input name="email" type="email" autocomplete="email" required>
+      <span class="field-error" data-error-for="email"></span>
+    </label>
+
+    <label>Password
+      <input name="password" type="password" autocomplete="new-password" required>
+      <span class="field-error" data-error-for="password"></span>
+    </label>
+
+    <label>Confirm password
+      <input name="confirm" type="password" autocomplete="new-password" required>
+      <span class="field-error" data-error-for="confirm"></span>
+    </label>
+
+    <!-- Only for problems that don't belong to one field (e.g. server down). -->
+    <p class="form-error" id="form-error"></p>
+    <button type="submit" class="btn btn-primary btn-block">Sign up</button>
+  </form>
+
+  <p class="auth-switch">Already have an account? <a href="{{ url_for('get_login') }}">Log in</a></p>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+{% endblock %}

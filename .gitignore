@@ -265,3 +265,7 @@ terraform.rc
 # *.dot
 
 *.tfplan
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
