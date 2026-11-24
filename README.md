@@ -27,6 +27,8 @@ Linux should work similarly. However Windows machines require different syntax f
   
   # Enable artifact registry in your project
   gcloud services enable artifactregistry.googleapis.com
+  # Enable API for database interactions
+  gcloud services enable sqladmin.googleapis.com
   
   # implements an authentication helper for image push 
   gcloud auth configure-docker ${GCP_REGION}-docker.pkg.dev
@@ -54,11 +56,30 @@ Linux should work similarly. However Windows machines require different syntax f
   # project number can be retrieved with `gcloud projects list`
   gcloud artifacts repositories add-iam-policy-binding ${REPO_NAME} --location=${GCP_REGION} --project=${PROJECT_ID} --member="serviceAccount:<your-project-number>-compute@developer.gserviceaccount.com" --role="roles/artifactregistry.reader"
   ```
-  
+
+### Applying deployment
+
 Now you have set up a project, enabled and set up the AR and pushed a container image to it.
 The next step is deployment of the computational resources to run the app, using terraform.
-First step is to duplicate and rename the `tfvars.example` file.
+1) First step is to duplicate and rename the `tfvars.example` file.
 In here you configure basic, reusable information about the deployment.
 You fill out the respective variables with their correct values.
 When naming the new file like `*.auto.tfvars` terraform uses them implicitly.
 Do not add secrets here and do not commit a filled out `*.tfvars` file.
+2) Now duplicate `secret.tfvars.example`, enter the correct values, and remove the `.example` suffix. These files are **never ever** intended to commit!
+3) Now you need to initialize the terraform project to download all providers.
+   ```bash
+   terraform init
+   ```
+4) Now you can create a deployment plan (when you suffixed the basic variables with `*auto.tfvars`)
+    ```bash
+   terraform plan -out plan.tfplan -var-file=secret.tfvars
+    ```
+5) Now apply the plan
+    ```bash
+   terraform apply "plan.tfplan"
+    ```
+6) If you want to delete deployed resources, you can destroy them via terraform
+    ```bash
+   terraform destroy -var-file=secret.tfvars
+    ```
