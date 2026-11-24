@@ -221,6 +221,7 @@ __marimo__/
 
 # Database
 *.db
+instance/
 
 # Terraform
 .terraform/

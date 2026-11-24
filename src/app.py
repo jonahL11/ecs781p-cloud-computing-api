@@ -1,9 +1,10 @@
 from flask import Flask, jsonify, request, render_template
-from auth import authenticate
+#from auth import authenticate
+from . import db
+import os
 
-app = Flask(__name__)
 
-
+"""
 #TODO FE: Signup/Login Forms
 #TODO BE: Signup/Login handling, DB interaction (local/dev DB like SQLite + Cloud DB)
 #TODO Infra: K8s cluster + Cloud DB
@@ -58,6 +59,16 @@ def post_login():
 # else allow entry of new password
 # PUT new password to user id i.e. email/username
 # route "/user/<user-id>
+"""
+def create_app():
+    app = Flask(__name__)
+    
+    app.config["DATABASE"] = "instance/database.db"
+    os.makedirs(app.instance_path, exist_ok=True)
+
+    db.init_app(app)
+
+    return app
 
 if __name__ == '__main__':
     app.run(debug=True)
