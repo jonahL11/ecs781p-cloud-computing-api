@@ -1,7 +1,10 @@
 from flask import Flask, jsonify, request, render_template
 from auth import authenticate
+from mock_api import mock_api
+import socket
 
 app = Flask(__name__)
+app.register_blueprint(mock_api)
 
 
 #TODO FE: Signup/Login Forms
@@ -51,6 +54,11 @@ def post_login():
     authenticate(username, pw)
     pass
 
+@app.route('/dashboard', methods=['GET'])
+def dashboard():
+    # Show the dashboard page.
+    return render_template("dashboard.html")
+
 # Forget password
 # Enter email
 # check if exists
@@ -58,6 +66,10 @@ def post_login():
 # else allow entry of new password
 # PUT new password to user id i.e. email/username
 # route "/user/<user-id>
+
+@app.route('/api/health', methods=['GET'])
+def health():
+    return jsonify({"status":"ok","served_by": socket.gethostname()})
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5050)

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Dashboard · PaperBase</title>
+        <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+      </head>
+      <body>
+        <button class="menu-btn" id="menu-btn" aria-label="Open menu">☰</button>
+        <aside class="sidebar" id="sidebar">
+          <div class="brand">PaperBase</div>
+          <nav class="nav">
+            <button class="nav-item active" data-view="all">All papers</button>
+            <button class="nav-item" data-view="library">My library</button>
+            <button class="nav-item" data-view="discover">Discover</button>
+          </nav>
+        </aside>
+        <div class="overlay" id="overlay"></div>
+        <main class="main">
+          <h1>Welcome</h1>
+          <p class="muted">Your paper dashboard.</p>
+          <button class="btn btn-primary" id ="add-paper-btn">+ Add paper</button>
+          <input type="search" id="search-input" class="search"
+           placeholder="Search titles, authors, venues…" autocomplete="off">
+           <section class="panel" id="papers-panel">
+            <h2>All papers</h2>
+            <ul class="paper-list" id="paper-list">
+              <li>Loading…</li>
+            </ul>
+          </section>
+      
+          <section class="panel hidden" id="library-panel">
+            <h2>My Library</h2>
+            <p class="empty">Coming soon: save papers here once user accounts are ready.</p>
+          </section>
+      
+          <section class="panel hidden" id="discover-panel">
+            <h2>Discover</h2>
+            <p class="empty">Coming soon</p>
+          </section>
+        </main>
+
+        <dialog class="modal" id="paper-modal">
+          <form id="paper-form">
+            <h2>Add paper</h2>
+            <label>Title* <input name="title"></label>
+            <label>Authors (comma separated) <input name="authors"></label>
+            <label>Year <input name="year" type="number"></label>
+            <label>Venue <input name="venue"></label>
+            <label>Citations <input name="citations" type="number"></label>
+            <p class="form-error" id="form-error"></p>
+            <div class="modal-actions">
+              <button type="button" class="btn" id="cancel-btn">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+          </form>
+        </dialog>
+
+        <footer class="footer">Served by <span id="served-by">...</span></footer>
+      
+        <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+      </body>
+</html>
