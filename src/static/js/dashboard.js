@@ -51,7 +51,6 @@ async function loadPapers(query = "") {
     };
   }
   
-// Search as the user types
 const searchInput = document.getElementById("search-input");
 searchInput.addEventListener("input", debounce(() => {
   loadPapers(searchInput.value.trim());
@@ -68,29 +67,6 @@ document.getElementById("add-paper-btn").addEventListener("click", () => {
 });
 
 document.getElementById("cancel-btn").addEventListener("click", () => modal.close());
-
-form.addEventListener("submit", async (event) => {
-  event.preventDefault(); 
-  const body = Object.fromEntries(new FormData(form));
-
-  try {
-    const response = await fetch("/api/papers", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    const data = await response.json();
-
-    if (response.status !== 201) {
-      formError.textContent = data.error; 
-      return;
-    }
-    modal.close();
-    loadPapers(searchInput.value.trim());
-  } catch (error) {
-    formError.textContent = "Couldn't save: " + error.message;
-  }
-});
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -130,3 +106,51 @@ async function loadServerInfo() {
   }
 }
 loadServerInfo();
+
+// Sidebar
+const sidebar = document.getElementById("sidebar");
+const overlay = document.getElementById("overlay");
+
+function openSidebar() {
+  sidebar.classList.add("open"); 
+  overlay.classList.add("show");    
+}
+
+function closeSidebar() {
+  sidebar.classList.remove("open");
+  overlay.classList.remove("show");
+}
+
+document.getElementById("menu-btn").addEventListener("click", openSidebar);
+overlay.addEventListener("click", closeSidebar);   // click outside to close
+
+// Press Esc to close
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") closeSidebar();
+});
+
+const panels = {
+  all: document.getElementById("papers-panel"),
+  library: document.getElementById("library-panel"),
+  discover: document.getElementById("discover-panel"),
+};
+
+function showView(view) {
+  for (const name in panels) {
+    panels[name].classList.toggle("hidden", name !== view);
+  }
+
+  document.querySelectorAll(".nav-item").forEach((tab) => {
+    tab.classList.toggle("active", tab.dataset.view === view);
+  });
+
+  const onAll = view === "all";
+  document.getElementById("search-input").classList.toggle("hidden", !onAll);
+  document.getElementById("add-paper-btn").classList.toggle("hidden", !onAll);
+
+  closeSidebar();
+}
+
+document.querySelectorAll(".nav-item").forEach((tab) => {
+  tab.addEventListener("click", () => showView(tab.dataset.view));
+});
