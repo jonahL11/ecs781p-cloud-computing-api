@@ -16,6 +16,78 @@ locals {
   app-container-full = "${local.app-container-base}:${var.app-container-tag}"
 }
 
+resource "kubernetes_ingress_v1" "default" {
+  metadata {
+    name = "${var.app-name}-ingress"
+    annotations = {
+      "kubernetes.io/ingress.global-static-ip-name" = google_compute_global_address.default.name
+      "networking.gke.io/managed-certificates" = kubernetes_manifest.managed-certificate.manifest.metadata.name
+      "networking.gke.io/v1beta1.FrontendConfig" = kubernetes_manifest.frontend-config.manifest.metadata.name
+    }
+  }
+  spec {
+    default_backend {
+      service {
+        name = kubernetes_service_v1.default.metadata[0].name
+        port {
+          number = 80
+        }
+      }
+    }
+
+    rule {
+      http {
+        path {
+          backend {
+            service {
+              name = kubernetes_service_v1.default.metadata[0].name
+              port {
+                number = 80
+              }
+            }
+          }
+
+          path = "/*"
+        }
+
+      }
+    }
+  }
+}
+
+#
+resource "kubernetes_manifest" "managed-certificate" {
+  manifest = {
+    apiVersion = "networking.gke.io/v1"
+    kind       = "ManagedCertificate"
+    metadata = {
+      name      = "${var.app-name}-managed-certificate"
+      namespace = "default"
+    }
+    spec = {
+      domains = [var.domain-name]
+    }
+  }
+}
+
+# FrontendConfig redirect http to https!
+resource "kubernetes_manifest" "frontend-config" {
+  manifest = {
+    apiVersion = "networking.gke.io/v1beta1"
+    kind       = "FrontendConfig"
+    metadata = {
+      name      = "${var.app-name}-frontend-config"
+      namespace = "default"
+    }
+    spec = {
+      redirectToHttps = {
+        enabled          = true
+        responseCodeName = "MOVED_PERMANENTLY_DEFAULT" # 301 redirect
+      }
+    }
+  }
+}
+
 # This defines a k8s workload, i.e. container(s) that is supposed to run
 # deployment ensures enough/not too many replicas of pods run
 resource "kubernetes_deployment_v1" "app" {
@@ -157,7 +229,7 @@ resource "kubernetes_deployment_v1" "app" {
 # This defines how our loadbalancer is configured
 resource "kubernetes_service_v1" "default" {
   metadata {
-    name = "${var.app-name}-app-loadbalancer"
+    name = "${var.app-name}-app-node-port"
   }
 
   spec {
@@ -172,7 +244,7 @@ resource "kubernetes_service_v1" "default" {
       target_port = kubernetes_deployment_v1.app.spec[0].template[0].spec[0].container[0].port[0].name
     }
 
-    type = "LoadBalancer"
+    type = "NodePort"
   }
 
   depends_on = [time_sleep.wait_service_cleanup]
