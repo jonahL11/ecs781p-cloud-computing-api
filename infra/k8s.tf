@@ -148,6 +148,14 @@ resource "kubernetes_deployment_v1" "app" {
               }
             }
           }
+          env {
+            name = "DB_DIALECT"
+            value = "mysql"
+          }
+          env {
+            name = "DB_NAME"
+            value = "main"
+          }
 
           security_context {
             allow_privilege_escalation = false
