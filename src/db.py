@@ -56,13 +56,22 @@ def get_engine(app: Flask) -> sqlalchemy.engine.Engine:
                 name=str(os.environ.get("DB_NAME")),
             )
             engine = sqlalchemy.create_engine(db_url, pool_pre_ping=True)
+            app.logger.info("Engine for mysql created")
             return engine
-        except Exception:
-            app.logger.exception("DB initialization failed")
-    db_path = str(Path(app.instance_path) / "database.db")
-    db_url = URL.create(drivername="sqlite", database=db_path)
-    engine = sqlalchemy.create_engine(db_url)
-    return engine
+        except (
+            sqlalchemy.exc.SQLAlchemyError,
+            sqlglot.errors.SqlglotError,
+            OSError,
+        ) as e:
+            app.logger.error(f"DB engine creation for mysql failed with: {e}")
+    try:
+        db_path = str(Path(app.instance_path) / "database.db")
+        db_url = URL.create(drivername="sqlite", database=db_path)
+        engine = sqlalchemy.create_engine(db_url)
+        app.logger.info("Engine for sqlite created")
+        return engine
+    except (sqlalchemy.exc.SQLAlchemyError, sqlglot.errors.SqlglotError, OSError) as e:
+        app.logger.error(f"DB engine creation for sqlite failed with: {e}")
 
 
 def get_db():
