@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify
 #from auth import authenticate
 from . import db
 import os
@@ -61,14 +61,17 @@ def post_login():
 # route "/user/<user-id>
 """
 def create_app():
+    #TODO fix/define what we do with this function
     app = Flask(__name__)
     
     app.config["DATABASE"] = "instance/database.db"
     os.makedirs(app.instance_path, exist_ok=True)
 
+    #TODO add handling to only really call this when the DB is completely empty (otherwise dropping table!!!)
     db.init_app(app)
 
     return app
 
 if __name__ == '__main__':
+    #TODO this should probably be with WSGI as recommended by Flask
     app.run(host="0.0.0.0", port=5050)
