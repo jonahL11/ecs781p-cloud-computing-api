@@ -12,29 +12,7 @@ from flask import Flask, current_app, g
 from flask.cli import with_appcontext
 from sqlalchemy.engine import URL
 
-
-def get_db_url(
-    driver: str, user: str, password: str, host: str, port: str, name: str
-) -> sqlalchemy.engine.URL:
-    """
-    Constructs a SQLAlchemy engine URL, with environment variables
-    :param driver: the driver name like mysql+pymysql or sqlite
-    :param user: the username used for auth
-    :param password: the password used for auth
-    :param host: the host, i.e. IP
-    :param port: the port, for MySQL for instance 3306
-    :param name: name of the database like main
-    :return: a sqlalchemy engine URL
-    """
-    db_url = URL.create(
-        drivername=driver,
-        username=user,
-        password=password,
-        host=host,
-        port=port,
-        database=name,
-    )
-    return db_url
+from config import get_db_url
 
 
 def get_engine(app: Flask) -> sqlalchemy.engine.Engine:
@@ -42,7 +20,7 @@ def get_engine(app: Flask) -> sqlalchemy.engine.Engine:
     Creates and returns a sqlalchemy engine. When the dialect (prod) is MySQL the URL is created by get_db_url().
     Else only the path to the dev sqlite db is used.
     :param app: Flask app for context
-    :return: a sqlalchemy engine
+    :return engine: a sqlalchemy engine
     """
     db_dialect = os.environ.get("DB_DIALECT", "sqlite")
     if db_dialect == "mysql":
@@ -95,7 +73,7 @@ def init_db():
     :return: None
     """
     db = get_engine(current_app)
-    with db.begin() as conn, open("schema.sql") as ddl:
+    with db.begin() as conn, open("../schema.sql") as ddl:
         query = sqlalchemy.text(ddl.read())
         dialect = os.environ.get("DB_DIALECT", "sqlite")
         try:

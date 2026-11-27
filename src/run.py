@@ -1,22 +1,9 @@
-from flask import Flask, jsonify
-#from auth import authenticate
-from . import db
-import os
-
+from app import create_app
 
 """
 #TODO FE: Signup/Login Forms
 #TODO BE: Signup/Login handling, DB interaction (local/dev DB like SQLite + Cloud DB)
 #TODO infra: K8s cluster + Cloud DB
-@app.route('/', methods=['GET','POST'])
-def hello_world():
-    #Testing HTML forms
-    if request.method == "POST":
-        first_name = request.form.get("fname")
-        last_name = request.form.get("lname")
-        return f"Your name is {first_name} {last_name}"
-    return render_template("form.html")
-
 @app.route('/signup', methods=['GET'])
 def get_signup():
     # Get signup page
@@ -60,18 +47,9 @@ def post_login():
 # PUT new password to user id i.e. email/username
 # route "/user/<user-id>
 """
-def create_app():
-    #TODO fix/define what we do with this function
-    app = Flask(__name__)
-    
-    app.config["DATABASE"] = "instance/database.db"
-    os.makedirs(app.instance_path, exist_ok=True)
 
-    #TODO add handling to only really call this when the DB is completely empty (otherwise dropping table!!!)
-    db.init_app(app)
+app = create_app()
 
-    return app
-
-if __name__ == '__main__':
-    #TODO this should probably be with WSGI as recommended by Flask
+if __name__ == "__main__":
+    # TODO this should probably be with WSGI as recommended by Flask
     app.run(host="0.0.0.0", port=5050)
