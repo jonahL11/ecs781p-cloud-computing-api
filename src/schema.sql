@@ -8,13 +8,13 @@ DROP TABLE IF EXISTS papers;
 DROP TABLE IF EXISTS authors;
 CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT NOT NULL UNIQUE,
-    fullname TEXT NOT NULL,
-    password TEXT NOT NULL --need to store hashed password
+    email VARCHAR(255) NOT NULL UNIQUE,
+    fullname VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL --need to store hashed password
 );
 CREATE TABLE roles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    role_name TEXT NOT NULL UNIQUE
+    role_name VARCHAR(255) NOT NULL UNIQUE
 );
 CREATE TABLE user_roles (
     user_id INTEGER NOT NULL,
@@ -25,10 +25,10 @@ CREATE TABLE user_roles (
 );
 CREATE TABLE papers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    abstract TEXT NOT NULL,
-    publication_date TEXT NOT NULL,
-    url TEXT NOT NULL
+    title VARCHAR(255) NOT NULL,
+    abstract VARCHAR(255) NOT NULL,
+    publication_date VARCHAR(255) NOT NULL,
+    url VARCHAR(255) NOT NULL
 );
 CREATE TABLE user_favorites (
     paper_id INTEGER NOT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE user_favorites (
 );
 CREATE TABLE authors (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    author_name TEXT NOT NULL,
+    author_name VARCHAR(255) NOT NULL,
     paper_count INTEGER NOT NULL DEFAULT 0,
     citation_count INTEGER NOT NULL DEFAULT 0
 );
