@@ -97,8 +97,8 @@ class Papers(db.Model):
     def __repr__(self):
         return f"<Paper {self.id}>"
 
-    papers_authors: Mapped[list[PapersAuthors]] = relationship(back_populates="users")
-    users_favorites: Mapped[list[UserFavorites]] = relationship(back_populates="users")
+    papers_authors: Mapped[list[PapersAuthors]] = relationship(back_populates="papers")
+    user_favorites: Mapped[list[UserFavorites]] = relationship(back_populates="papers")
 
 
 class Authors(db.Model):

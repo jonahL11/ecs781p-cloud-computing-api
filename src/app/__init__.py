@@ -6,6 +6,7 @@ from app import routes
 from config import Config
 
 from .extensions import db
+from .favourites import bp as favourites_bp
 
 SCHEMA_LOCK_NAME = "paperquery_schema_init"
 SCHEMA_LOCK_TIMEOUT_S = 60
@@ -52,5 +53,6 @@ def create_app() -> Flask:
     with app.app_context():
         init_schema()
         routes.register_routes(app)
+        app.register_blueprint(favourites_bp)
 
     return app
