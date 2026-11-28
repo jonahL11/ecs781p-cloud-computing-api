@@ -8,8 +8,8 @@ The Google Cloud SDK `gcloud` is used for authentication and CLI interactions wi
 
 ### Infrastructure Prerequisites
 > [!WARNING]
-> The following instructions and pre-requisites have only been tested on MacOs machines. 
-Linux should work similarly. However Windows machines require different syntax for environment variables. 
+> The following instructions and pre-requisites have only been tested on MacOs machines.
+Linux should work similarly. However Windows machines require different syntax for environment variables.
 
 #### GCP & Docker
 - have `terraform` CLI installed ([Link](https://developer.hashicorp.com/terraform/install))
@@ -17,7 +17,7 @@ Linux should work similarly. However Windows machines require different syntax f
 - have `docker` CLI & daemon installed and running ([Link](https://docs.docker.com/get-docker/desktop/))
 - have a GCP project setup and set as default project context in `gcloud`
   ```bash
-  gcloud init 
+  gcloud init
   # OR
   gcloud auth login # for devices with browser
   export PROJECT_ID="<your-gcp-project-id>"
@@ -26,17 +26,17 @@ Linux should work similarly. However Windows machines require different syntax f
 - have GCP artifact registry (AR) enabled, including an existing docker repo
   ```bash
   export GCP_REGION="<your-gcp-region>" #like europe-west2
-  
+
   # Enable API for database interactions
   # Enable artifact registry in your project
   # Enable certificate management required for SSL certs
   # Enable google kubernetes engine API
   gcloud services enable artifactregistry.googleapis.com sqladmin.googleapis.com certificatemanager.googleapis.com container.googleapis.com
-  
-  
-  # implements an authentication helper for image push 
+
+
+  # implements an authentication helper for image push
   gcloud auth configure-docker ${GCP_REGION}-docker.pkg.dev
-  
+
   # create AR repo
   export REPO_NAME="<your-repo-name>"
   gcloud artifacts repositories create ${REPO_NAME} --repository-format=docker --location=${GCP_REGION} --description="<your-description>"
@@ -46,12 +46,12 @@ Linux should work similarly. However Windows machines require different syntax f
   # Build image locally (must have same OS as deployment OS)
   export IMAGE_NAME="<your-app-name>"
   export IMAGE_TAG="<your-app-image-version>"
-  
+
   docker build . --platform linux/amd64 --tag=${IMAGE_NAME}:${IMAGE_TAG}
-  
+
   # Tag local image with AR compliant name
   docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${GCP_REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO_NAME}/${IMAGE_NAME}:${IMAGE_TAG}
-  
+
   # Push local image to remote AR
   docker push ${GCP_REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO_NAME}/${IMAGE_NAME}:${IMAGE_TAG}
   ```

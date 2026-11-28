@@ -266,3 +266,6 @@ terraform.rc
 # *.dot
 
 *.tfplan
+
+#Apple hidden files
+.DS_Store
