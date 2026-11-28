@@ -1,3 +1,4 @@
+--!!! NOT USED IN APP currently
 DROP TABLE IF EXISTS user_roles;
 DROP TABLE IF EXISTS user_favorites;
 DROP TABLE IF EXISTS papers_authors;
